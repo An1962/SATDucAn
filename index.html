@@ -35,11 +35,14 @@
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bb-bg-light); overflow: hidden; color: #1e293b; -webkit-tap-highlight-color: transparent; }
         
-        /* --- FONT FORCE FIX --- */
-        .font-sat, .font-sat *, 
-        #stimulus-area, #stimulus-area *,
-        #question-text-area, #question-text-area *,
-        .editor-content, .editor-content * { 
+        /* --- SMART FONT FIX --- */
+        /* 1. Thiết lập font mặc định cho vùng chứa */
+        .font-sat, #stimulus-area, #question-text-area, .editor-content { 
+            font-family: 'Minion Pro', 'Crimson Text', 'Times New Roman', serif; 
+        }
+        
+        /* 2. Chỉ ép font cho các thẻ VĂN BẢN để đè style copy-paste, TRÁNH các thẻ MathJax (mjx-*) */
+        :is(.font-sat, #stimulus-area, #question-text-area, .editor-content) :is(p, span, div, a, li, h1, h2, h3, h4, h5, h6, b, strong, i, em, u, s, strike, mark, blockquote) {
             font-family: 'Minion Pro', 'Crimson Text', 'Times New Roman', serif !important; 
         }
         
@@ -196,18 +199,36 @@
 
         <div class="max-w-[1600px] mx-auto p-4 md:p-6">
             <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden flex flex-col lg:flex-row lg:h-[85vh] h-auto">
+                <!-- Editor Pane -->
                 <div class="w-full lg:w-8/12 p-6 bg-slate-50 border-r border-slate-200 lg:overflow-y-auto custom-scroll">
-                     <div class="mb-4 grid grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Cấu hình Môn thi</label><select id="section-config" class="w-full p-2 border border-slate-300 rounded text-sm bg-white focus:ring-1 focus:ring-[#004488]"><option value="rw">Section: Reading & Writing</option><option value="math">Section: Math</option></select></div>
-                        <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Logo URL</label><input type="text" id="logo-url-input" class="w-full p-2 border border-slate-300 rounded text-sm" placeholder="URL Logo..." value="https://scontent.fhan19-1.fna.fbcdn.net/v/t39.30808-6/451857108_122097042800425386_7602682011904409290_n.png?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeF5KI_9YQ5D-akv4pn95ai5qZLgHr4cJYSpkuAevhwlhJcbLURmaydM6uCuaMFsO0r71uvEkcB5K3qzZJUGyQ-W&_nc_ohc=jh5DGil1sVoQ7kNvwHeq4Gy&_nc_oc=AdliAeHQtcyTo_WnU8DsNytQi6TgoV5qecCfqWz3qnP5ptMUPmnKSEyvJlDwPRJNbTI&_nc_zt=23&_nc_ht=scontent.fhan19-1.fna&_nc_gid=mWvYiwDI82jFu9mMJf0d_A&oh=00_Afg3GkZGL-wffds_Vs7bra1y1EchAvJzZwt3UCai0wrnpw&oe=692EDD83"></div>
+                     <div class="mb-4 grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Cấu hình Môn thi</label>
+                            <select id="section-config" class="w-full p-2 border border-slate-300 rounded text-sm bg-white focus:ring-1 focus:ring-[#004488]">
+                                <option value="rw">Section: Reading & Writing</option>
+                                <option value="math">Section: Math</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Thời gian (phút)</label>
+                            <input type="number" id="time-limit-input" class="w-full p-2 border border-slate-300 rounded text-sm font-bold text-slate-700" value="32" min="1">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Logo URL</label>
+                            <input type="text" id="logo-url-input" class="w-full p-2 border border-slate-300 rounded text-sm" placeholder="URL Logo..." value="https://scontent.fhan19-1.fna.fbcdn.net/v/t39.30808-6/451857108_122097042800425386_7602682011904409290_n.png?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeF5KI_9YQ5D-akv4pn95ai5qZLgHr4cJYSpkuAevhwlhJcbLURmaydM6uCuaMFsO0r71uvEkcB5K3qzZJUGyQ-W&_nc_ohc=jh5DGil1sVoQ7kNvwHeq4Gy&_nc_oc=AdliAeHQtcyTo_WnU8DsNytQi6TgoV5qecCfqWz3qnP5ptMUPmnKSEyvJlDwPRJNbTI&_nc_zt=23&_nc_ht=scontent.fhan19-1.fna&_nc_gid=mWvYiwDI82jFu9mMJf0d_A&oh=00_Afg3GkZGL-wffds_Vs7bra1y1EchAvJzZwt3UCai0wrnpw&oe=692EDD83">
+                        </div>
                     </div>
+
+                    <!-- TABS -->
                     <div class="flex border-b border-slate-200 mb-4">
                         <button id="tab-content-btn" onclick="switchTab('content')" class="px-4 py-2 text-sm font-bold text-[#004488] border-b-2 border-[#004488]">Nội dung Câu hỏi</button>
                         <button id="tab-explain-btn" onclick="switchTab('explain')" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-[#004488]">Lời giải Chi tiết</button>
                     </div>
+
+                    <!-- TAB 1: CONTENT -->
                     <div id="tab-content-panel">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 md:h-[350px] h-[500px]">
-                            <div class="flex flex-col h-full min-h-0"><div class="flex justify-between items-center mb-1 shrink-0"><label class="text-[10px] font-bold text-slate-500 uppercase">Đề bài (Trái)</label><div class="flex gap-1"><button onclick="formatDoc('bold')" class="text-xs p-1 bg-white border rounded"><i class="fa-solid fa-bold"></i></button><button onclick="formatDoc('italic')" class="text-xs p-1 bg-white border rounded"><i class="fa-solid fa-italic"></i></button><button onclick="insertImage()" class="text-xs p-1 bg-white border rounded"><i class="fa-regular fa-image"></i></button></div></div><div id="q-stimulus-editor" contenteditable="true" class="editor-content w-full flex-1 min-h-0 p-3 border border-slate-300 rounded bg-white font-sat text-lg overflow-y-auto focus:ring-1 ring-blue-500 custom-scroll shrink-0" placeholder="Nhập bài đọc..."></div></div>
+                            <div class="flex flex-col h-full min-h-0"><div class="flex justify-between items-center mb-1 shrink-0"><label class="text-[10px] font-bold text-slate-500 uppercase">Đề bài (Trái)</label><div class="flex gap-1"><button onclick="formatDoc('bold')" class="text-xs p-1 bg-white border rounded"><i class="fa-solid fa-bold"></i></button><button onclick="formatDoc('italic')" class="text-xs p-1 bg-white border rounded"><i class="fa-solid fa-italic"></i></button><button onclick="insertImage()" class="text-xs p-1 bg-white border rounded"><i class="fa-regular fa-image"></i></button></div></div><div id="q-stimulus-editor" contenteditable="true" class="editor-content w-full flex-1 min-h-0 p-3 border border-slate-300 rounded bg-white font-sat text-lg overflow-y-auto focus:ring-1 ring-blue-500 custom-scroll shrink-0" placeholder="Nhập bài đọc/đề bài..."></div></div>
                             <div class="flex flex-col h-full min-h-0"><div class="flex justify-between items-center mb-1 shrink-0"><label class="text-[10px] font-bold text-slate-500 uppercase">Câu hỏi (Phải)</label><div class="flex gap-1"><button onclick="formatDoc('bold')" class="text-xs p-1 bg-white border rounded"><i class="fa-solid fa-bold"></i></button><button onclick="formatDoc('italic')" class="text-xs p-1 bg-white border rounded"><i class="fa-solid fa-italic"></i></button></div></div><div id="q-stem-editor" contenteditable="true" class="editor-content w-full flex-1 min-h-0 p-3 border border-slate-300 rounded bg-white font-sat text-lg overflow-y-auto focus:ring-1 ring-blue-500 custom-scroll shrink-0" placeholder="Nhập câu hỏi..."></div></div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 mb-4">
@@ -221,13 +242,20 @@
                             <div class="flex items-center gap-2"><span class="font-bold w-4 text-sm text-slate-400">D</span><input type="text" id="opt-d" class="flex-1 p-2 border rounded text-sm font-sat text-lg"></div>
                         </div>
                     </div>
+
+                    <!-- TAB 2: EXPLANATION -->
                     <div id="tab-explain-panel" class="hidden">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 md:h-[400px] h-[600px]">
                             <div class="flex flex-col h-full min-h-0"><label class="text-[10px] font-bold text-slate-500 uppercase mb-1">Giải thích Bài đọc (Trái)</label><div id="expl-passage-editor" contenteditable="true" class="editor-content w-full flex-1 min-h-0 p-3 border border-slate-300 rounded bg-white font-sat text-lg overflow-y-auto focus:ring-1 ring-blue-500 custom-scroll shrink-0" placeholder="Phân tích bài đọc..."></div></div>
                             <div class="flex flex-col h-full min-h-0"><label class="text-[10px] font-bold text-slate-500 uppercase mb-1">Giải thích Đáp án (Phải)</label><div id="expl-answer-editor" contenteditable="true" class="editor-content w-full flex-1 min-h-0 p-3 border border-slate-300 rounded bg-white font-sat text-lg overflow-y-auto focus:ring-1 ring-blue-500 custom-scroll shrink-0" placeholder="Giải thích đáp án..."></div></div>
                         </div>
                     </div>
-                    <button onclick="addQuestion()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded font-bold shadow-md flex justify-center items-center gap-2"><i class="fa-solid fa-circle-plus"></i> Thêm vào danh sách</button>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex gap-2">
+                        <button id="btn-save-question" onclick="saveQuestion()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded font-bold shadow-md flex justify-center items-center gap-2 transition"><i class="fa-solid fa-circle-plus"></i> Thêm vào danh sách</button>
+                        <button id="btn-cancel-edit" onclick="cancelEdit()" class="hidden bg-slate-500 hover:bg-slate-600 text-white px-4 rounded font-bold shadow-md transition"><i class="fa-solid fa-xmark"></i> Hủy</button>
+                    </div>
                 </div>
                 <div class="w-full lg:w-4/12 bg-white flex flex-col border-t lg:border-t-0">
                     <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center"><h3 class="font-bold text-slate-700 text-sm">Danh sách câu hỏi (<span id="q-count">0</span>)</h3></div>
@@ -310,6 +338,8 @@
     <script>
         let questions=[], currentQIndex=0, userAnswers={}, userAnnotations={}, markedQuestions=new Set();
         let timerInterval, timeLeft=32*60, isTimerHidden=false, isAnnotateMode=false, isReviewMode=false;
+        let editingIndex = -1; 
+
         window.onload = function() { loadFromStorage(); var elt = document.getElementById('desmos-calculator'); Desmos.GraphingCalculator(elt, { keypad: true, expressions: true, settingsMenu: true, border: false }); makeDraggable(document.getElementById('calculator-modal'), document.getElementById('calc-header')); makeDraggable(document.getElementById('ref-sheet-modal'), document.getElementById('ref-header')); document.addEventListener('mouseup', handleTextSelection); document.addEventListener('keydown', handleShortcuts); };
         
         function handleNext() {
@@ -328,13 +358,56 @@
         function handleShortcuts(e) { if(document.body.classList.contains('mode-teacher')) return; if(e.key === 'ArrowRight') handleNext(); if(e.key === 'ArrowLeft') handlePrev(); }
         
         function switchTab(t) { document.getElementById('tab-content-panel').classList.toggle('hidden', t !== 'content'); document.getElementById('tab-explain-panel').classList.toggle('hidden', t !== 'explain'); document.getElementById('tab-content-btn').className = t==='content' ? "px-4 py-2 text-sm font-bold text-[#004488] border-b-2 border-[#004488]" : "px-4 py-2 text-sm font-bold text-slate-500 hover:text-[#004488]"; document.getElementById('tab-explain-btn').className = t==='explain' ? "px-4 py-2 text-sm font-bold text-[#004488] border-b-2 border-[#004488]" : "px-4 py-2 text-sm font-bold text-slate-500 hover:text-[#004488]"; }
-        function addQuestion() {
+        
+        function saveQuestion() {
             const s1=document.getElementById('q-stimulus-editor').innerHTML, s2=document.getElementById('q-stem-editor').innerHTML, c=document.getElementById('q-correct').value;
             const e1=document.getElementById('expl-passage-editor').innerHTML, e2=document.getElementById('expl-answer-editor').innerHTML;
             if(!s2.trim() && !s1.trim()) return alert("Nhập nội dung!");
-            questions.push({ id:Date.now(), stimulus:s1, stem:s2, type:document.getElementById('q-type').value, correct:c, explPassage:e1, explAnswer:e2, options:{A:document.getElementById('opt-a').value, B:document.getElementById('opt-b').value, C:document.getElementById('opt-c').value, D:document.getElementById('opt-d').value}});
-            saveToStorage(); document.getElementById('q-stimulus-editor').innerHTML=''; document.getElementById('q-stem-editor').innerHTML=''; document.getElementById('q-correct').value=''; document.getElementById('expl-passage-editor').innerHTML=''; document.getElementById('expl-answer-editor').innerHTML=''; ['a','b','c','d'].forEach(k=>document.getElementById('opt-'+k).value=''); renderQuestionList(); switchTab('content');
+            
+            const qObj = { 
+                id: (editingIndex !== -1) ? questions[editingIndex].id : Date.now(), 
+                stimulus:s1, stem:s2, type:document.getElementById('q-type').value, correct:c, explPassage:e1, explAnswer:e2, 
+                options:{A:document.getElementById('opt-a').value, B:document.getElementById('opt-b').value, C:document.getElementById('opt-c').value, D:document.getElementById('opt-d').value}
+            };
+
+            if(editingIndex !== -1) { questions[editingIndex] = qObj; cancelEdit(); } else { questions.push(qObj); resetForm(); }
+            saveToStorage(); renderQuestionList();
         }
+
+        function editQuestion(index) {
+            const q = questions[index]; editingIndex = index;
+            document.getElementById('q-stimulus-editor').innerHTML = q.stimulus || ""; document.getElementById('q-stem-editor').innerHTML = q.stem || "";
+            document.getElementById('q-type').value = q.type; document.getElementById('q-correct').value = q.correct;
+            document.getElementById('opt-a').value = q.options.A; document.getElementById('opt-b').value = q.options.B;
+            document.getElementById('opt-c').value = q.options.C; document.getElementById('opt-d').value = q.options.D;
+            document.getElementById('expl-passage-editor').innerHTML = q.explPassage || ""; document.getElementById('expl-answer-editor').innerHTML = q.explAnswer || "";
+            toggleOptions(); switchTab('content');
+            const btnSave = document.getElementById('btn-save-question'); btnSave.innerHTML = '<i class="fa-solid fa-rotate"></i> Lưu thay đổi'; btnSave.className = "flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2.5 rounded font-bold shadow-md flex justify-center items-center gap-2 transition";
+            document.getElementById('btn-cancel-edit').classList.remove('hidden');
+        }
+
+        function cancelEdit() {
+            editingIndex = -1; resetForm();
+            const btnSave = document.getElementById('btn-save-question'); btnSave.innerHTML = '<i class="fa-solid fa-circle-plus"></i> Thêm vào danh sách'; btnSave.className = "flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded font-bold shadow-md flex justify-center items-center gap-2 transition";
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+        }
+
+        function resetForm() {
+            document.getElementById('q-stimulus-editor').innerHTML=''; document.getElementById('q-stem-editor').innerHTML=''; 
+            document.getElementById('q-correct').value=''; document.getElementById('expl-passage-editor').innerHTML=''; 
+            document.getElementById('expl-answer-editor').innerHTML=''; ['a','b','c','d'].forEach(k=>document.getElementById('opt-'+k).value='');
+            switchTab('content');
+        }
+
+        function renderQuestionList(){
+            const l=document.getElementById('question-list');l.innerHTML='';document.getElementById('q-count').innerText=questions.length;
+            questions.forEach((q,i)=>{
+                const isActive = (i === editingIndex) ? "border-orange-400 bg-orange-50 ring-1 ring-orange-400" : "border-slate-200 bg-white hover:border-blue-500";
+                l.innerHTML+=`<div class="p-3 border rounded mb-2 text-sm relative group ${isActive}"><div class="font-bold text-blue-800">Q${i+1}</div><div class="text-gray-500 text-xs">${(q.stem||"").replace(/<[^>]*>/g,'').substring(0,50)}...</div><div class="absolute top-2 right-2 flex gap-2"><button onclick="editQuestion(${i})" class="text-blue-400 hover:text-blue-600"><i class="fa-solid fa-pen"></i></button><button onclick="deleteQ(${i})" class="text-red-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>`
+            })
+        }
+
+        // ... Standard functions ...
         function saveToStorage(){localStorage.setItem('sat_data_v3',JSON.stringify(questions))}
         function loadFromStorage(){try{questions=JSON.parse(localStorage.getItem('sat_data_v3')||'[]');renderQuestionList()}catch(e){}}
         function clearAllData(){if(confirm("Delete?")){questions=[];saveToStorage();renderQuestionList()}}
@@ -342,10 +415,11 @@
         function importData(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=(e)=>{try{questions=JSON.parse(e.target.result);saveToStorage();renderQuestionList();alert("Done")}catch{alert("Err")}};r.readAsText(f)}
         function formatDoc(c) { document.execCommand(c, false, null); }
         function insertImage() { const u = prompt("URL:"); if(u) document.execCommand('insertImage', false, u); }
-        function renderQuestionList(){const l=document.getElementById('question-list');l.innerHTML='';document.getElementById('q-count').innerText=questions.length;questions.forEach((q,i)=>{l.innerHTML+=`<div class="p-3 border rounded mb-2 text-sm relative group bg-white hover:border-blue-500"><div class="font-bold text-blue-800">Q${i+1}</div><div class="text-gray-500 text-xs">${(q.stem||"").substring(0,50)}...</div><button onclick="deleteQ(${i})" class="absolute top-2 right-2 text-red-400 hidden group-hover:block"><i class="fa-solid fa-trash"></i></button></div>`})}
-        function deleteQ(i){if(confirm("Del?")){questions.splice(i,1);saveToStorage();renderQuestionList()}}
+        function deleteQ(i){if(confirm("Del?")){questions.splice(i,1); if(editingIndex===i) cancelEdit(); saveToStorage();renderQuestionList()}}
         function toggleOptions(){document.getElementById('options-container').style.display=document.getElementById('q-type').value==='mcq'?'block':'none'}
-        function startTest(){if(questions.length===0)return alert("Empty!");document.getElementById('header-section-name').innerText=document.getElementById('section-config').value==='math'?"Section 1: Math":"Section 1: Reading & Writing";const l=document.getElementById('logo-url-input').value;if(l){document.getElementById('watermark-logo-display').src=l;document.getElementById('footer-logo-img').src=l}userAnswers={};markedQuestions.clear();currentQIndex=0;timeLeft=32*60;isReviewMode=false;document.body.classList.remove('mode-teacher');switchView('student-view');document.getElementById('footer-q-total').innerText=questions.length;startTimer();renderQuestionContent(0)}
+        function startTest(){if(questions.length===0)return alert("Empty!");document.getElementById('header-section-name').innerText=document.getElementById('section-config').value==='math'?"Section 1: Math":"Section 1: Reading & Writing";const l=document.getElementById('logo-url-input').value;if(l){document.getElementById('watermark-logo-display').src=l;document.getElementById('footer-logo-img').src=l}userAnswers={};markedQuestions.clear();currentQIndex=0; 
+            const tInput = document.getElementById('time-limit-input'); timeLeft = (tInput && tInput.value) ? parseInt(tInput.value)*60 : 32*60;
+            isReviewMode=false;document.body.classList.remove('mode-teacher');switchView('student-view');document.getElementById('footer-q-total').innerText=questions.length;startTimer();renderQuestionContent(0)}
         function switchView(id){document.querySelectorAll('.view-section').forEach(el=>el.classList.remove('view-active'));document.getElementById(id).classList.add('view-active')}
         function loadQuestion(i){if(i<0||i>=questions.length)return;currentQIndex=i;renderQuestionContent(i)}
         
